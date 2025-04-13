@@ -1,7 +1,88 @@
+'use client';
+
 import Link from 'next/link';
+import { useState } from 'react';
+import { createClient } from '@/lib/supabase';
 import LoginButton from '@/components/auth/login-button';
 
 export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+    general: ''
+  });
+  
+  const supabase = createClient();
+
+  const clearError = (field: string) => {
+    setErrors(prev => ({
+      ...prev,
+      [field]: ''
+    }));
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      email: '',
+      password: '',
+      general: ''
+    };
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      newErrors.email = 'Please enter a valid email address';
+      isValid = false;
+    }
+
+    // Password validation
+    if (!password) {
+      newErrors.password = 'Password is required';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    try {
+      setLoading(true);
+      setErrors({ ...errors, general: '' });
+      
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        // Handle different types of auth errors
+        if (error.message.toLowerCase().includes('email')) {
+          setErrors({ ...errors, email: error.message });
+        } else if (error.message.toLowerCase().includes('password')) {
+          setErrors({ ...errors, password: error.message });
+        } else {
+          setErrors({ ...errors, general: error.message });
+        }
+      } else {
+        // Redirect handled by Supabase auth callback
+      }
+    } catch (error) {
+      console.error('Error signing in:', error);
+      setErrors({ ...errors, general: 'An unexpected error occurred' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left column - form */}
@@ -20,25 +101,90 @@ export default function LoginPage() {
           <div className="mt-8">
             <div className="rounded-lg border bg-card p-8 shadow-sm">
               <div className="space-y-6">
-                <div className="flex flex-col gap-2">
-                  <LoginButton />
+                {/* Email/Password login form (at the top) */}
+                <form onSubmit={handleEmailLogin} className="flex flex-col gap-4">
+                  <div className="form-control">
+                    <label className="label" htmlFor="email">
+                      <span className="label-text">Email</span>
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        clearError('email');
+                      }}
+                      className={`input input-bordered w-full validator ${errors.email ? 'input-error' : ''}`}
+                      pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
+                      title="Please enter a valid email address"
+                      required
+                    />
+                    {errors.email ? (
+                      <span className="text-error text-xs mt-1">{errors.email}</span>
+                    ) : (
+                      <span className="validator-hint">Enter a valid email address</span>
+                    )}
+                  </div>
                   
-                  {/* DaisyUI divider component */}
-                  <div className="divider">Or continue with</div>
+                  <div className="form-control">
+                    <label className="label" htmlFor="password">
+                      <span className="label-text">Password</span>
+                    </label>
+                    <input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••••"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        clearError('password');
+                      }}
+                      className={`input input-bordered w-full validator ${errors.password ? 'input-error' : ''}`}
+                      title="Enter your password"
+                      required
+                    />
+                    {errors.password ? (
+                      <span className="text-error text-xs mt-1">{errors.password}</span>
+                    ) : (
+                      <span className="validator-hint">Enter your password</span>
+                    )}
+                  </div>
+                  
+                  {errors.general && (
+                    <div className="text-error text-sm bg-error/10 p-2 rounded">{errors.general}</div>
+                  )}
                   
                   <button
-                    className="btn btn-outline btn-block"
-                    disabled
+                    type="submit"
+                    disabled={loading}
+                    className="btn btn-primary w-full mt-2"
                   >
-                    <span className="text-muted-foreground">Email (Coming Soon)</span>
+                    {loading ? (
+                      <>
+                        <span className="loading loading-spinner"></span>
+                        Signing in...
+                      </>
+                    ) : (
+                      'Sign in with Email'
+                    )}
                   </button>
+                </form>
+                
+                {/* Divider */}
+                <div className="divider">Or continue with</div>
+                
+                {/* Social login (at the bottom) */}
+                <div className="flex flex-col gap-2">
+                  <LoginButton />
                 </div>
               </div>
             </div>
             
             <div className="mt-6 text-center text-sm text-muted-foreground">
               Don&apos;t have an account?{' '}
-              <Link href="/login" className="font-medium text-primary hover:text-primary/80 underline underline-offset-4">
+              <Link href="/signup" className="font-medium text-primary hover:text-primary/80 underline underline-offset-4">
                 Create an account
               </Link>
             </div>
@@ -46,11 +192,11 @@ export default function LoginPage() {
             <div className="mt-8 text-center">
               <p className="text-xs text-muted-foreground">
                 By signing in, you agree to our{' '}
-                <Link href="#" className="underline underline-offset-4 hover:text-primary">
+                <Link href="/terms" className="underline underline-offset-4 hover:text-primary">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link href="#" className="underline underline-offset-4 hover:text-primary">
+                <Link href="/privacy" className="underline underline-offset-4 hover:text-primary">
                   Privacy Policy
                 </Link>
               </p>
