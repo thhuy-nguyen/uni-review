@@ -56,7 +56,7 @@ export default function UserProfile() {
       <div className="mt-4">
         <button 
           onClick={handleSignOut} 
-          className="px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700"
+          className="btn btn-error btn-sm"
         >
           Sign Out
         </button>

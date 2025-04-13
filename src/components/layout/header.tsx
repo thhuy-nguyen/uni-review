@@ -8,13 +8,15 @@ import { themeChange } from 'theme-change';
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isReviewsOpen, setIsReviewsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const reviewsMenuRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
 
   useEffect(() => {
     // Initialize theme-change
     themeChange(false);
-
+    
     async function checkSession() {
       const { data: { session } } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
@@ -25,6 +27,9 @@ export default function Header() {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
+      }
+      if (reviewsMenuRef.current && !reviewsMenuRef.current.contains(event.target as Node)) {
+        setIsReviewsOpen(false);
       }
     };
 
@@ -73,7 +78,7 @@ export default function Header() {
               <div className="relative">
                 <button
                   type="button"
-                  className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
+                  className="btn btn-ghost btn-circle"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                   <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white">
@@ -97,7 +102,7 @@ export default function Header() {
                       </Link>
                       <button
                         onClick={handleSignOut}
-                        className="block w-full rounded-md p-2 text-left text-sm transition-colors hover:bg-muted"
+                        className="btn btn-ghost w-full justify-start text-left"
                       >
                         Sign out
                       </button>
@@ -108,7 +113,7 @@ export default function Header() {
             ) : (
               <Link
                 href="/login"
-                className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-primary/90"
+                className="btn btn-primary"
               >
                 Sign in
               </Link>
@@ -150,7 +155,7 @@ export default function Header() {
           <div className="md:hidden">
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted"
+              className="btn btn-square btn-ghost"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-expanded={isMenuOpen}
             >
@@ -190,9 +195,6 @@ export default function Header() {
             >
               Universities
             </Link>
-            <div>
-
-            </div>
             <Link
               href="/about"
               className="block px-2 py-1.5 text-sm font-medium transition-colors hover:text-primary"
@@ -206,14 +208,14 @@ export default function Header() {
                 <div className="space-y-2">
                   <Link
                     href="/dashboard"
-                    className="block px-2 py-1.5 text-sm font-medium transition-colors hover:text-primary"
+                    className="btn btn-ghost w-full justify-start"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/profile"
-                    className="block px-2 py-1.5 text-sm font-medium transition-colors hover:text-primary"
+                    className="btn btn-ghost w-full justify-start"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Profile
@@ -223,7 +225,7 @@ export default function Header() {
                       handleSignOut();
                       setIsMenuOpen(false);
                     }}
-                    className="block w-full text-left px-2 py-1.5 text-sm font-medium transition-colors hover:text-primary"
+                    className="btn btn-ghost w-full justify-start"
                   >
                     Sign out
                   </button>
@@ -232,7 +234,7 @@ export default function Header() {
                 <div className="pt-2">
                   <Link
                     href="/login"
-                    className="block w-full text-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-primary/90"
+                    className="btn btn-primary btn-block"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Sign in
