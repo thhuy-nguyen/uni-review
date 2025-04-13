@@ -4,11 +4,13 @@ import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { themeChange } from 'theme-change';
+import Image from 'next/image';
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isReviewsOpen, setIsReviewsOpen] = useState(false);
+  const [userData, setUserData] = useState<{ email: string; avatar_url: string | null } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const reviewsMenuRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
@@ -20,6 +22,13 @@ export default function Header() {
     async function checkSession() {
       const { data: { session } } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
+      
+      if (session?.user) {
+        setUserData({
+          email: session.user.email || '',
+          avatar_url: session.user.user_metadata?.avatar_url || null
+        });
+      }
     }
     checkSession();
 
@@ -43,6 +52,11 @@ export default function Header() {
     await supabase.auth.signOut();
     setIsLoggedIn(false);
     window.location.href = '/';
+  };
+
+  // Get the first letter of the user's email for the avatar fallback
+  const getInitial = () => {
+    return userData?.email ? userData.email[0].toUpperCase() : 'U';
   };
 
   return (
@@ -75,40 +89,42 @@ export default function Header() {
           {/* Login/User profile */}
           <div className="hidden md:flex items-center gap-4">
             {isLoggedIn ? (
-              <div className="relative">
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-circle"
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                >
-                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white">
-                    <span>U</span>
+              <div className="dropdown dropdown-end">
+                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white overflow-hidden">
+                    {userData?.avatar_url ? (
+                      <Image 
+                        src={userData.avatar_url} 
+                        alt="User avatar" 
+                        width={32} 
+                        height={32}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <span>{getInitial()}</span>
+                    )}
                   </div>
-                </button>
-                {isMenuOpen && (
-                  <div ref={menuRef} className="absolute right-0 mt-2 w-48 rounded-md border bg-background shadow-md">
-                    <div className="p-2">
-                      <Link
-                        href="/dashboard"
-                        className="block w-full rounded-md p-2 text-left text-sm transition-colors hover:bg-muted"
-                      >
-                        Dashboard
-                      </Link>
-                      <Link
-                        href="/profile"
-                        className="block w-full rounded-md p-2 text-left text-sm transition-colors hover:bg-muted"
-                      >
-                        Profile
-                      </Link>
-                      <button
-                        onClick={handleSignOut}
-                        className="btn btn-ghost w-full justify-start text-left"
-                      >
-                        Sign out
-                      </button>
-                    </div>
-                  </div>
-                )}
+                </div>
+                <div tabIndex={0} className="dropdown-content z-[60] menu p-2 shadow bg-base-100 rounded-box w-52">
+                  <Link
+                    href="/dashboard"
+                    className="block w-full rounded-md p-2 text-left text-sm transition-colors hover:bg-muted"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="block w-full rounded-md p-2 text-left text-sm transition-colors hover:bg-muted"
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="btn btn-ghost w-full justify-start text-left"
+                  >
+                    Sign out
+                  </button>
+                </div>
               </div>
             ) : (
               <Link
