@@ -3,16 +3,18 @@
 import { createClient } from '@/lib/supabase';
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
+import { themeChange } from 'theme-change';
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isReviewsOpen, setIsReviewsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const reviewsMenuRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
 
   useEffect(() => {
+    // Initialize theme-change
+    themeChange(false);
+
     async function checkSession() {
       const { data: { session } } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
@@ -23,9 +25,6 @@ export default function Header() {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
-      }
-      if (reviewsMenuRef.current && !reviewsMenuRef.current.contains(event.target as Node)) {
-        setIsReviewsOpen(false);
       }
     };
 
@@ -43,7 +42,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
@@ -60,48 +59,6 @@ export default function Header() {
             >
               Universities
             </Link>
-            <div ref={reviewsMenuRef} className="relative">
-              <button
-                type="button"
-                className="flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary"
-                onClick={() => setIsReviewsOpen(!isReviewsOpen)}
-                aria-expanded={isReviewsOpen}
-              >
-                <span>Reviews</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={`h-4 w-4 transition-transform ${isReviewsOpen ? 'rotate-180' : ''}`}
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </button>
-              {isReviewsOpen && (
-                <div className="absolute top-full right-0 mt-2 w-60 rounded-md border bg-background shadow-md">
-                  <div className="p-2">
-                    <Link 
-                      href="/reviews/knowledge" 
-                      className="block w-full rounded-md p-2 text-left text-sm transition-colors hover:bg-muted"
-                    >
-                      Knowledge Reviews
-                    </Link>
-                    <Link 
-                      href="/reviews/career" 
-                      className="block w-full rounded-md p-2 text-left text-sm transition-colors hover:bg-muted"
-                    >
-                      Career Reviews
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
             <Link
               href="/about"
               className="text-sm font-medium transition-colors hover:text-primary"
@@ -156,6 +113,37 @@ export default function Header() {
                 Sign in
               </Link>
             )}
+            
+            {/* Theme toggle - moved next to sign in button */}
+            <label className="flex cursor-pointer gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round">
+                <circle cx="12" cy="12" r="5" />
+                <path
+                  d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
+              </svg>
+              <input type="checkbox" value="synthwave" className="toggle theme-controller" data-toggle-theme="dark,light" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </label>
           </div>
 
           {/* Mobile menu button */}
@@ -194,7 +182,7 @@ export default function Header() {
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden border-t">
-          <div className="container p-4 space-y-3">
+          <div className="container mx-auto p-4 space-y-3 max-w-7xl">
             <Link
               href="/universities"
               className="block px-2 py-1.5 text-sm font-medium transition-colors hover:text-primary"
@@ -203,44 +191,7 @@ export default function Header() {
               Universities
             </Link>
             <div>
-              <button
-                className="flex w-full items-center justify-between px-2 py-1.5 text-sm font-medium transition-colors hover:text-primary"
-                onClick={() => setIsReviewsOpen(!isReviewsOpen)}
-              >
-                <span>Reviews</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={`h-4 w-4 transition-transform ${isReviewsOpen ? 'rotate-180' : ''}`}
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </button>
-              {isReviewsOpen && (
-                <div className="ml-4 mt-1 space-y-2">
-                  <Link
-                    href="/reviews/knowledge"
-                    className="block px-2 py-1.5 text-sm transition-colors hover:text-primary"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Knowledge Reviews
-                  </Link>
-                  <Link
-                    href="/reviews/career"
-                    className="block px-2 py-1.5 text-sm transition-colors hover:text-primary"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Career Reviews
-                  </Link>
-                </div>
-              )}
+
             </div>
             <Link
               href="/about"
@@ -288,6 +239,39 @@ export default function Header() {
                   </Link>
                 </div>
               )}
+              
+              {/* Mobile theme toggle */}
+              <div className="mt-4 flex items-center">
+                <label className="flex cursor-pointer gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="5" />
+                    <path
+                      d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
+                  </svg>
+                  <input type="checkbox" value="synthwave" className="toggle theme-controller" data-toggle-theme="dark,light" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                  </svg>
+                </label>
+              </div>
             </div>
           </div>
         </div>

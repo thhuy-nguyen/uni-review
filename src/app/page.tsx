@@ -21,9 +21,9 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-background">
-          <div className="container px-4 md:px-6">
+          <div className="container px-4 md:px-6 mx-auto max-w-7xl">
             <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
+              <div className="space-y-2 max-w-5xl mx-auto">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
                   UniReview: The Truth About Universities
                 </h1>
@@ -35,7 +35,7 @@ export default function Home() {
               <div className="flex flex-wrap items-center justify-center gap-4">
                 <Link 
                   href="/search" 
-                  className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-white"
                 >
                   Find Universities
                 </Link>
@@ -52,9 +52,9 @@ export default function Home() {
 
         {/* Features Section */}
         <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
-          <div className="container px-4 md:px-6">
+          <div className="container px-4 md:px-6 mx-auto max-w-7xl">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
+              <div className="space-y-2 max-w-5xl mx-auto">
                 <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Why Use UniReview?</h2>
                 <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
                   Get the information you need to make the right choice for your education
@@ -106,9 +106,9 @@ export default function Home() {
 
         {/* How It Works Section */}
         <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
+          <div className="container px-4 md:px-6 mx-auto max-w-7xl">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
+              <div className="space-y-2 max-w-5xl mx-auto">
                 <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">How It Works</h2>
                 <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
                   Simple steps to find the right university for you
@@ -180,9 +180,9 @@ export default function Home() {
         
         {/* CTA Section */}
         <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
-          <div className="container px-4 md:px-6">
+          <div className="container px-4 md:px-6 mx-auto max-w-7xl">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
+              <div className="space-y-2 max-w-5xl mx-auto">
                 <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Ready to find your perfect university?</h2>
                 <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
                   Start exploring honest reviews from real students today.
@@ -191,7 +191,7 @@ export default function Home() {
               <div className="flex flex-wrap items-center justify-center gap-4">
                 <Link 
                   href="/search" 
-                  className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-white"
                 >
                   Explore Universities
                 </Link>
