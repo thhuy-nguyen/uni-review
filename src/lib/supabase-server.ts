@@ -34,6 +34,7 @@ export async function getUniversities() {
     .select(`
       id, 
       name,
+      slug,
       city,
       logo_url,
       established,

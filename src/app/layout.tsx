@@ -1,5 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import PageLayout from '@/components/layout/page-layout';
 
 export const metadata: Metadata = {
   title: 'UniReview',
@@ -13,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <PageLayout>
+          {children}
+        </PageLayout>
+      </body>
     </html>
   );
 }

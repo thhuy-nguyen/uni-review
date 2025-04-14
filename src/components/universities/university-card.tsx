@@ -5,6 +5,7 @@ import { StarIcon } from '@/components/ui/icons';
 type University = {
   id: string;
   name: string;
+  slug?: string;
   country: string;
   city: string;
   country_code?: string;
@@ -18,10 +19,13 @@ interface UniversityCardProps {
 }
 
 export default function UniversityCard({ university }: UniversityCardProps) {
-  const { id, name, country, city, logo_url, avg_rating = 0, review_count = 0 } = university;
+  const { id, name, slug, country, city, logo_url, avg_rating = 0, review_count = 0 } = university;
+  
+  // Use slug if available, otherwise fall back to ID
+  const linkPath = slug ? `/universities/${slug}` : `/universities/${encodeURIComponent(id)}`;
   
   return (
-    <Link href={`/universities/${id}`}>
+    <Link href={linkPath}>
       <div className="card bg-base-100 border hover:shadow-md transition-shadow">
         <div className="card-body">
           <div className="flex items-center gap-4">
@@ -31,7 +35,7 @@ export default function UniversityCard({ university }: UniversityCardProps) {
                   src={logo_url} 
                   alt={`${name} logo`} 
                   width={64} 
-                  height={64} 
+                  height={64}
                   className="object-cover w-full h-full"
                 />
               ) : (
