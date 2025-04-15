@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase';
 
 interface ReviewStats {
   academicRating: number;
@@ -16,6 +17,7 @@ interface University {
   name: string;
   description?: string;
   programs?: any[];
+  slug?: string;
   // Add other fields as needed
 }
 
@@ -26,7 +28,19 @@ interface UniversityDetailTabsProps {
 
 export default function UniversityDetailTabs({ university, reviewStats }: UniversityDetailTabsProps) {
   const [activeTab, setActiveTab] = useState('overview');
-  
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  // Check if user is authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      setIsAuthenticated(!!data.user);
+    };
+
+    checkAuth();
+  }, []);
+
   return (
     <div>
       <div className="tabs tabs-bordered mb-6">
@@ -37,10 +51,15 @@ export default function UniversityDetailTabs({ university, reviewStats }: Univer
           Overview
         </button>
         <button 
-          className={`tab tab-lg ${activeTab === 'academics' ? 'tab-active' : ''}`}
+          className={`tab tab-lg ${activeTab === 'academics' ? 'tab-active' : ''} relative`}
           onClick={() => setActiveTab('academics')}
         >
           Academics
+          <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full p-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </span>
         </button>
         <button 
           className={`tab tab-lg ${activeTab === 'campus' ? 'tab-active' : ''}`}
@@ -49,10 +68,15 @@ export default function UniversityDetailTabs({ university, reviewStats }: Univer
           Campus Life
         </button>
         <button 
-          className={`tab tab-lg ${activeTab === 'careers' ? 'tab-active' : ''}`}
+          className={`tab tab-lg ${activeTab === 'careers' ? 'tab-active' : ''} relative`}
           onClick={() => setActiveTab('careers')}
         >
           Career Outcomes
+          <span className="absolute -top-1 -right-1 bg-accent text-white rounded-full p-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </span>
         </button>
       </div>
       
@@ -165,7 +189,15 @@ export default function UniversityDetailTabs({ university, reviewStats }: Univer
         {/* Academics Tab */}
         {activeTab === 'academics' && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Academic Programs</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold">Academic Programs</h2>
+              <div className="badge badge-primary gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                <span>Key Focus Area</span>
+              </div>
+            </div>
             
             {university.programs && university.programs.length > 0 ? (
               <div className="space-y-4">
@@ -260,72 +292,37 @@ export default function UniversityDetailTabs({ university, reviewStats }: Univer
                 </div>
               </div>
             </div>
-            
-            <div className="mt-6 space-y-4">
-              <h3 className="text-lg font-semibold">Campus Photos</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="aspect-video bg-base-200 flex items-center justify-center rounded-lg">
-                  <span className="text-sm text-muted-foreground">No photos yet</span>
-                </div>
-                <div className="aspect-video bg-base-200 flex items-center justify-center rounded-lg">
-                  <span className="text-sm text-muted-foreground">No photos yet</span>
-                </div>
-                <div className="aspect-video bg-base-200 flex items-center justify-center rounded-lg">
-                  <span className="text-sm text-muted-foreground">No photos yet</span>
-                </div>
-              </div>
-              <div className="text-center mt-4">
-                <button className="btn btn-outline btn-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  Add Photos
-                </button>
-              </div>
-            </div>
           </div>
         )}
         
         {/* Career Outcomes Tab */}
         {activeTab === 'careers' && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Career Outcomes</h2>
-            
-            <div className="prose max-w-none mb-8">
-              <p>Information about graduate employment rates, average salaries, and career services will be displayed here.</p>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold">Career Outcomes</h2>
+              <div className="badge badge-accent gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Coming Soon</span>
+              </div>
             </div>
             
-            <div className="card bg-base-200 mb-8">
+            <p className="mb-4">Information about career outcomes for graduates will be available soon.</p>
+            
+            <div className="card bg-base-200">
               <div className="card-body">
-                <h3 className="card-title">Career Prospects Rating</h3>
+                <h3 className="card-title">Career Prospects</h3>
                 <div className="flex items-center gap-4">
-                  <div className="radial-progress text-primary" style={{ "--value": reviewStats.careerRating * 20, "--size": "5rem" } as any}>
+                  <div className="radial-progress text-accent" style={{ "--value": reviewStats.careerRating * 20, "--size": "5rem" } as any}>
                     {reviewStats.careerRating.toFixed(1)}
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm">Based on student and alumni reviews</p>
-                    <progress className="progress progress-primary w-56" value={reviewStats.careerRating * 20} max="100"></progress>
+                    <p className="text-sm">Based on student reviews</p>
+                    <progress className="progress progress-accent w-56" value={reviewStats.careerRating * 20} max="100"></progress>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="alert mb-8">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="h-6 w-6 stroke-info">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>
-                <h3 className="font-bold">Career Data</h3>
-                <div className="text-sm">
-                  We're currently collecting detailed career outcome data for graduates of this university.
-                </div>
-              </div>
-            </div>
-            
-            <h3 className="text-lg font-semibold mb-4">Alumni Insights</h3>
-            <div className="text-center py-8 border rounded-lg">
-              <p className="text-muted-foreground mb-4">No alumni insights available yet</p>
-              <button className="btn btn-outline btn-sm">Share Your Experience</button>
             </div>
           </div>
         )}
