@@ -44,6 +44,29 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Resume Review Banner */}
+      <section className="w-full py-10 bg-primary text-white">
+        <div className="container px-4 md:px-6 mx-auto max-w-7xl">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 md:w-2/3">
+              <h2 className="text-2xl font-bold tracking-tight">NEW: Resume ATS Compatibility Checker</h2>
+              <p className="text-white/90 max-w-[600px]">
+                Upload your resume and job description to instantly check if you'll pass the ATS filters. 
+                Get personalized recommendations to improve your chances of landing that interview.
+              </p>
+            </div>
+            <div>
+              <Link 
+                href="/universities/new/review" 
+                className="btn bg-white text-primary hover:bg-white/90"
+              >
+                Check My Resume
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
         <div className="container px-4 md:px-6 mx-auto max-w-7xl">
@@ -93,6 +116,92 @@ export default function Home() {
               <p className="text-sm text-muted-foreground text-center">
                 Our legitimacy section is exclusive to reviewers with verified .edu email addresses.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Resume Review Feature Section */}
+      <section className="w-full py-12 md:py-24 bg-white">
+        <div className="container px-4 md:px-6 mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div className="space-y-4">
+              <div className="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm text-primary">
+                New Feature
+              </div>
+              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">ATS Resume Review</h2>
+              <p className="md:text-lg text-muted-foreground">
+                Did you know that over 75% of resumes are rejected by Applicant Tracking Systems 
+                before a human ever sees them? Our AI-powered ATS checker helps you:
+              </p>
+              <ul className="space-y-2 text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary shrink-0">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                  <span>Match keywords from job descriptions</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary shrink-0">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                  <span>Identify missing skills that employers want</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary shrink-0">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                  <span>Get specific suggestions to improve your resume</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary shrink-0">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                  <span>Track improvements over time</span>
+                </li>
+              </ul>
+              <div className="pt-4">
+                <Link href="/universities/new/review" className="btn btn-primary">
+                  Try Resume Review Now
+                </Link>
+              </div>
+            </div>
+            <div className="rounded-xl border bg-muted/50 p-8 relative">
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Resume Analysis</h3>
+                  <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                    85% Match
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-medium mb-1">ATS Compatibility</p>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div className="bg-green-600 h-2.5 rounded-full" style={{ width: "85%" }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm font-medium mb-2">Matched Keywords</p>
+                    <div className="flex flex-wrap gap-1">
+                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">javascript</span>
+                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">react</span>
+                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">nextjs</span>
+                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">typescript</span>
+                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">frontend</span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm font-medium mb-2">Missing Keywords</p>
+                    <div className="flex flex-wrap gap-1">
+                      <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">redux</span>
+                      <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">graphql</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

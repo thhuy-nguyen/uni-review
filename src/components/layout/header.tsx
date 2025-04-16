@@ -79,6 +79,12 @@ export default function Header() {
               Universities
             </Link>
             <Link
+              href="/resume-review"
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
+              Resume Review
+            </Link>
+            <Link
               href="/about"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
@@ -111,6 +117,12 @@ export default function Header() {
                     className="block w-full rounded-md p-2 text-left text-sm transition-colors hover:bg-muted"
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    href="/dashboard/resume-reviews"
+                    className="block w-full rounded-md p-2 text-left text-sm transition-colors hover:bg-muted"
+                  >
+                    Resume Reviews
                   </Link>
                   <Link
                     href="/profile"
@@ -212,6 +224,13 @@ export default function Header() {
               Universities
             </Link>
             <Link
+              href="/resume-review"
+              className="block px-2 py-1.5 text-sm font-medium transition-colors hover:text-primary"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Resume Review
+            </Link>
+            <Link
               href="/about"
               className="block px-2 py-1.5 text-sm font-medium transition-colors hover:text-primary"
               onClick={() => setIsMenuOpen(false)}
@@ -228,6 +247,13 @@ export default function Header() {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    href="/dashboard/resume-reviews"
+                    className="btn btn-ghost w-full justify-start"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Resume Reviews
                   </Link>
                   <Link
                     href="/profile"
