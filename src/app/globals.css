@@ -5,17 +5,113 @@
 }
 
 :root {
+  /* Base colors for light mode */
   --background: #ffffff;
   --foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --primary: #6366f1; /* indigo-500 */
+  --primary-foreground: #ffffff;
+  --secondary: #8b5cf6; /* purple-500 */
+  --secondary-foreground: #ffffff;
+  --accent: #f3f4f6; /* gray-100 */
+  --accent-foreground: #1f2937;
+  --muted: #f3f4f6; /* gray-100 */
+  --muted-foreground: #6b7280; /* gray-500 */
+  --border: #e5e7eb; /* gray-200 */
+  --success: #10b981; /* emerald-500 */
+  --success-light: #d1fae5; /* emerald-100 */
+  --warning: #f59e0b; /* amber-500 */
+  --warning-light: #fef3c7; /* amber-100 */
+  --danger: #ef4444; /* red-500 */
+  --danger-light: #fee2e2; /* red-100 */
 }
 
+[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --primary: #6366f1; /* indigo-500 */
+  --primary-foreground: #ffffff;
+  --secondary: #8b5cf6; /* purple-500 */
+  --secondary-foreground: #ffffff;
+  --accent: #f3f4f6; /* gray-100 */
+  --accent-foreground: #1f2937;
+  --muted: #f3f4f6; /* gray-100 */
+  --muted-foreground: #6b7280; /* gray-500 */
+  --border: #e5e7eb; /* gray-200 */
+  --success: #10b981; /* emerald-500 */
+  --success-light: #d1fae5; /* emerald-100 */
+  --warning: #f59e0b; /* amber-500 */
+  --warning-light: #fef3c7; /* amber-100 */
+  --danger: #ef4444; /* red-500 */
+  --danger-light: #fee2e2; /* red-100 */
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #1f2937; /* gray-800 */
+  --card-foreground: #f9fafb; /* gray-50 */
+  --primary: #818cf8; /* indigo-400 */
+  --primary-foreground: #ffffff;
+  --secondary: #a78bfa; /* purple-400 */
+  --secondary-foreground: #ffffff;
+  --accent: #374151; /* gray-700 */
+  --accent-foreground: #f9fafb;
+  --muted: #374151; /* gray-700 */
+  --muted-foreground: #d1d5db; /* gray-300 */
+  --border: #374151; /* gray-700 */
+  --success: #34d399; /* emerald-400 */
+  --success-light: rgba(16, 185, 129, 0.2); /* emerald-500 with opacity */
+  --warning: #fbbf24; /* amber-400 */
+  --warning-light: rgba(245, 158, 11, 0.2); /* amber-500 with opacity */
+  --danger: #f87171; /* red-400 */
+  --danger-light: rgba(239, 68, 68, 0.2); /* red-500 with opacity */
+  color-scheme: dark;
+}
+
+/* Use system preference as a fallback */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --card: #1f2937;
+    --card-foreground: #f9fafb;
+    --primary: #818cf8;
+    --primary-foreground: #ffffff;
+    --secondary: #a78bfa;
+    --secondary-foreground: #ffffff;
+    --accent: #374151;
+    --accent-foreground: #f9fafb;
+    --muted: #374151;
+    --muted-foreground: #d1d5db;
+    --border: #374151;
+    --success: #34d399;
+    --success-light: rgba(16, 185, 129, 0.2);
+    --warning: #fbbf24;
+    --warning-light: rgba(245, 158, 11, 0.2);
+    --danger: #f87171;
+    --danger-light: rgba(239, 68, 68, 0.2);
   }
 }
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Utility classes that can be used directly in HTML */
+.bg-card { background-color: var(--card); }
+.text-card-foreground { color: var(--card-foreground); }
+.bg-primary { background-color: var(--primary); }
+.text-primary { color: var(--primary); }
+.bg-secondary { background-color: var(--secondary); }
+.text-secondary { color: var(--secondary); }
+.bg-muted { background-color: var(--muted); }
+.text-muted { color: var(--muted-foreground); }
+.border-color { border-color: var(--border); }
