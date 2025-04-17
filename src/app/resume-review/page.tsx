@@ -50,9 +50,9 @@ export default function ResumeReviewPage() {
           <ResumeReviewForm />
       )}
       
-      <div className="mt-10 bg-white p-6 rounded-lg shadow-sm">
-        <h2 className="text-xl font-semibold mb-4">Why Resume ATS Analysis Matters</h2>
-        <div className="prose max-w-none">
+      <div className="mt-10 bg-base-100 p-6 rounded-lg shadow-sm border border-base-200">
+        <h2 className="text-xl font-semibold mb-4 text-base-content">Why Resume ATS Analysis Matters</h2>
+        <div className="prose max-w-none text-base-content/80">
           <p>
             Many companies use Applicant Tracking Systems (ATS) to filter resumes before they reach human recruiters.
             These systems scan for keywords and qualifications that match the job description.
@@ -60,7 +60,7 @@ export default function ResumeReviewPage() {
           <p className="mt-4">
             Our ATS review tool helps you:
           </p>
-          <ul className="mt-2">
+          <ul className="mt-2 list-disc pl-5">
             <li>Match your resume to specific job descriptions</li>
             <li>Identify missing keywords and skills</li>
             <li>Improve your chances of getting past automated filters</li>

@@ -11,6 +11,20 @@ interface ATSAnalysisResult {
   missingKeywords: string[];
   suggestions: string[];
   score: number;
+  sectionScores?: {
+    skills: number;
+    experience: number;
+    education: number;
+    overall: number;
+  };
+  keywordImportance?: Record<string, number>; // 1-10 rating of importance
+  actionVerbs?: {
+    strong: string[];
+    weak: string[];
+  };
+  readabilityScore?: number; // 0-100 score for resume readability
+  contentGaps?: string[]; // Major content areas missing from resume
+  industryKeywords?: string[]; // Industry-specific keywords that might help
 }
 
 export default function ResumeReviewForm() {
@@ -256,14 +270,27 @@ export default function ResumeReviewForm() {
           <div className="card-actions justify-between mt-2">
             <button
               onClick={resetResumeReview}
-              className="btn btn-outline btn-neutral"
+              className="btn btn-outline border-base-content/30 text-base-content hover:bg-base-content hover:text-base-100"
               type="button"
+              disabled={isAnalyzing || !resume && !jobDescription}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5 mr-1"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                />
               </svg>
               Reset
             </button>
+            
             <button
               onClick={analyzeResume}
               className="btn btn-primary"
@@ -339,12 +366,134 @@ export default function ResumeReviewForm() {
                 <div className="stat-value text-secondary">{atsAnalysis.missingKeywords.length}</div>
                 <div className="stat-desc">Keywords to add</div>
               </div>
+              
+              {atsAnalysis.readabilityScore !== undefined && (
+                <div className="stat">
+                  <div className="stat-title text-base-content/70">Readability</div>
+                  <div className={`stat-value ${
+                    atsAnalysis.readabilityScore >= 80 ? 'text-success' : 
+                    atsAnalysis.readabilityScore >= 60 ? 'text-warning' : 
+                    'text-error'
+                  }`}>
+                    {atsAnalysis.readabilityScore}%
+                  </div>
+                  <div className="stat-desc">For both ATS & humans</div>
+                </div>
+              )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              {/* Matched Keywords */}
+            {/* Section Score Analysis - New Component */}
+            {atsAnalysis.sectionScores && (
+              <div className="bg-base-100 border border-base-300 rounded-box p-6 mb-6">
+                <h4 className="font-semibold text-lg mb-4">Section Score Analysis</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium">Skills Match</span>
+                      <span className={`text-sm ${
+                        atsAnalysis.sectionScores.skills >= 80 ? 'text-success' : 
+                        atsAnalysis.sectionScores.skills >= 50 ? 'text-warning' : 
+                        'text-error'
+                      }`}>
+                        {atsAnalysis.sectionScores.skills}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                      <div 
+                        className={`h-2.5 rounded-full ${
+                          atsAnalysis.sectionScores.skills >= 80 ? 'bg-success' : 
+                          atsAnalysis.sectionScores.skills >= 50 ? 'bg-warning' : 
+                          'bg-error'
+                        }`}
+                        style={{ width: `${atsAnalysis.sectionScores.skills}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium">Experience Match</span>
+                      <span className={`text-sm ${
+                        atsAnalysis.sectionScores.experience >= 80 ? 'text-success' : 
+                        atsAnalysis.sectionScores.experience >= 50 ? 'text-warning' : 
+                        'text-error'
+                      }`}>
+                        {atsAnalysis.sectionScores.experience}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                      <div 
+                        className={`h-2.5 rounded-full ${
+                          atsAnalysis.sectionScores.experience >= 80 ? 'bg-success' : 
+                          atsAnalysis.sectionScores.experience >= 50 ? 'bg-warning' : 
+                          'bg-error'
+                        }`}
+                        style={{ width: `${atsAnalysis.sectionScores.experience}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium">Education Match</span>
+                      <span className={`text-sm ${
+                        atsAnalysis.sectionScores.education >= 80 ? 'text-success' : 
+                        atsAnalysis.sectionScores.education >= 50 ? 'text-warning' : 
+                        'text-error'
+                      }`}>
+                        {atsAnalysis.sectionScores.education}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                      <div 
+                        className={`h-2.5 rounded-full ${
+                          atsAnalysis.sectionScores.education >= 80 ? 'bg-success' : 
+                          atsAnalysis.sectionScores.education >= 50 ? 'bg-warning' : 
+                          'bg-error'
+                        }`}
+                        style={{ width: `${atsAnalysis.sectionScores.education}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium">Overall Content Match</span>
+                      <span className={`text-sm ${
+                        atsAnalysis.sectionScores.overall >= 80 ? 'text-success' : 
+                        atsAnalysis.sectionScores.overall >= 50 ? 'text-warning' : 
+                        'text-error'
+                      }`}>
+                        {atsAnalysis.sectionScores.overall}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                      <div 
+                        className={`h-2.5 rounded-full ${
+                          atsAnalysis.sectionScores.overall >= 80 ? 'bg-success' : 
+                          atsAnalysis.sectionScores.overall >= 50 ? 'bg-warning' : 
+                          'bg-error'
+                        }`}
+                        style={{ width: `${atsAnalysis.sectionScores.overall}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-4 text-sm text-base-content/70">
+                  <p className="mb-1"><span className="font-semibold">What this means:</span> These scores show how well each section of your resume matches the job description.</p>
+                  <p>Focus your improvements on the sections with lower scores to increase your chances of getting past ATS filters.</p>
+                </div>
+              </div>
+            )}
+
+            {/* Keywords Analysis - Made each collapse independent */}
+            <h4 className="font-semibold text-lg mb-4">Keywords Analysis</h4>
+            
+            {/* Matched Keywords */}
+            <div className="mb-4">
               <div className="collapse collapse-arrow bg-base-100 border border-base-300 rounded-box">
-                <input type="checkbox" defaultChecked /> 
+                <input type="checkbox" id="matched-keywords-collapse" className="collapse-checkbox" defaultChecked /> 
                 <div className="collapse-title font-medium">
                   Matched Keywords ({atsAnalysis.matchedKeywords.length})
                 </div>
@@ -359,10 +508,12 @@ export default function ResumeReviewForm() {
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Missing Keywords */}
+            {/* Missing Keywords */}
+            <div className="mb-6">
               <div className="collapse collapse-arrow bg-base-100 border border-base-300 rounded-box">
-                <input type="checkbox" defaultChecked /> 
+                <input type="checkbox" id="missing-keywords-collapse" className="collapse-checkbox" defaultChecked /> 
                 <div className="collapse-title font-medium">
                   Missing Keywords ({atsAnalysis.missingKeywords.length})
                 </div>
@@ -383,6 +534,149 @@ export default function ResumeReviewForm() {
                 </div>
               </div>
             </div>
+            
+            {/* Keyword Importance Analysis - New Component */}
+            {atsAnalysis.keywordImportance && Object.keys(atsAnalysis.keywordImportance).length > 0 && (
+              <div className="bg-base-100 border border-base-300 rounded-box p-6 mb-6">
+                <h4 className="font-semibold text-lg mb-4">Keyword Importance Analysis</h4>
+                <p className="text-sm text-base-content/70 mb-4">
+                  These keywords are ranked by importance in the job description. Focus on including the high-importance keywords 
+                  that are currently missing from your resume.
+                </p>
+                
+                <div className="overflow-x-auto">
+                  <table className="table table-zebra w-full">
+                    <thead>
+                      <tr>
+                        <th>Keyword</th>
+                        <th>Importance</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(atsAnalysis.keywordImportance)
+                        .sort(([, importanceA], [, importanceB]) => importanceB - importanceA)
+                        .slice(0, 10)
+                        .map(([keyword, importance]) => (
+                          <tr key={keyword}>
+                            <td className="font-medium">{keyword}</td>
+                            <td>
+                              <div className="flex items-center">
+                                <div className="rating rating-xs rating-half">
+                                  {[...Array(10)].map((_, i) => (
+                                    <input 
+                                      key={i} 
+                                      type="radio" 
+                                      name={`rating-${keyword}`} 
+                                      className={`bg-primary mask ${i < importance ? 'mask-star-2 opacity-100' : 'mask-star-2 opacity-30'}`} 
+                                      disabled
+                                    />
+                                  ))}
+                                </div>
+                                <span className="ml-2 text-xs">{importance}/10</span>
+                              </div>
+                            </td>
+                            <td>
+                              {atsAnalysis.matchedKeywords.includes(keyword) ? (
+                                <span className="badge badge-success badge-sm">Found</span>
+                              ) : (
+                                <span className="badge badge-error badge-sm">Missing</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Action Verb Analysis - New Component */}
+            {atsAnalysis.actionVerbs && (
+              <div className="bg-base-100 border border-base-300 rounded-box p-6 mb-6">
+                <h4 className="font-semibold text-lg mb-3">Action Verb Analysis</h4>
+                <p className="text-sm text-base-content/70 mb-4">
+                  Strong action verbs make your resume more impactful and can help you stand out from other candidates.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h5 className="text-sm font-medium mb-2 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-success mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Strong Verbs Used
+                    </h5>
+                    <div className="flex flex-wrap gap-2">
+                      {atsAnalysis.actionVerbs.strong && atsAnalysis.actionVerbs.strong.length > 0 ? (
+                        atsAnalysis.actionVerbs.strong.map((verb, idx) => (
+                          <span key={idx} className="badge badge-success">{verb}</span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-base-content/70">No strong action verbs detected</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h5 className="text-sm font-medium mb-2 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-error mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      Weak Verbs to Replace
+                    </h5>
+                    <div className="flex flex-wrap gap-2">
+                      {atsAnalysis.actionVerbs.weak && atsAnalysis.actionVerbs.weak.length > 0 ? (
+                        atsAnalysis.actionVerbs.weak.map((verb, idx) => (
+                          <span key={idx} className="badge badge-outline badge-error">{verb}</span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-success">No weak action verbs detected - great job!</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Content Gap Analysis - New Component */}
+            {atsAnalysis.contentGaps && atsAnalysis.contentGaps.length > 0 && (
+              <div className="bg-base-100 border border-base-300 rounded-box p-6 mb-6">
+                <h4 className="font-semibold text-lg mb-3">Content Gap Analysis</h4>
+                <p className="text-sm text-base-content/70 mb-4">
+                  These are important content areas that appear to be missing or underdeveloped in your resume.
+                  Adding these sections or details could significantly improve your match with this job.
+                </p>
+                
+                <div className="grid grid-cols-1 gap-3">
+                  {atsAnalysis.contentGaps.map((gap, index) => (
+                    <div key={index} className="alert alert-warning shadow-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      <span>{gap}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Industry-Specific Keywords - New Component */}
+            {atsAnalysis.industryKeywords && atsAnalysis.industryKeywords.length > 0 && (
+              <div className="bg-base-100 border border-base-300 rounded-box p-6 mb-6">
+                <h4 className="font-semibold text-lg mb-3">Industry-Specific Keywords</h4>
+                <p className="text-sm text-base-content/70 mb-4">
+                  These industry-specific keywords are relevant to the role but might be missing from your resume.
+                  Consider incorporating them where appropriate.
+                </p>
+                
+                <div className="flex flex-wrap gap-2">
+                  {atsAnalysis.industryKeywords.map((keyword, idx) => (
+                    <div key={idx} className="badge badge-info badge-lg">{keyword}</div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Improvement Suggestions */}
             <div className="bg-base-100 border border-base-300 rounded-box p-6 mb-6">

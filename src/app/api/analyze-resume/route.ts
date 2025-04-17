@@ -57,9 +57,9 @@ export async function POST(request: NextRequest) {
     }
     
     // Only perform AI-based analysis, no fallback to basic keyword matching
-    if (!process.env.OPENAI_API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({ 
-        error: 'AI service is not configured. Please set the OPENAI_API_KEY environment variable.' 
+        error: 'AI service is not configured. Please set the GEMINI_API_KEY environment variable.' 
       }, { status: 500 });
     }
     
@@ -142,61 +142,118 @@ async function parseDocx(file: File): Promise<string> {
  */
 async function analyzeResumeWithAI(resumeText: string, jobDescription: string): Promise<any> {
   try {
-    // Use EdgeRuntime compatible OpenAI fetch API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',  // Using GPT-4o Mini for cost efficiency
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert ATS (Applicant Tracking System) analyzer that evaluates resumes against job descriptions. Your analysis should be thorough but focused on actionable insights.'
-          },
-          {
-            role: 'user',
-            content: `Analyze this resume against the job description. Extract key skills, experience, and qualifications from both. Determine match percentage based on critical requirements and provide specific improvement suggestions.
-            
-            RESUME:
-            ${resumeText.slice(0, 6000)} 
-            
-            JOB DESCRIPTION:
-            ${jobDescription.slice(0, 3000)}
-            
-            Respond with a JSON object containing:
-            1. matchedKeywords: Array of keywords/skills found in both the resume and job description (focus on the most relevant ones)
-            2. missingKeywords: Array of important keywords/skills from the job description missing in the resume (prioritize by importance)
-            3. score: Numeric score from 0-100 representing match percentage
-            4. suggestions: Array of 3-5 specific improvement suggestions that would make the resume more competitive for this position
-            `
-          }
-        ],
-        temperature: 0.2,
-        response_format: { type: "json_object" }
-      })
-    });
+    // Initialize Google Generative AI client
+    const { GoogleGenerativeAI } = await import('@google/generative-ai');
     
-    if (!response.ok) {
-      console.log(response)
-      throw new Error(`AI service error: ${response.status}`);
+    // Check if API key exists
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error('Missing Gemini API key. Please set the GEMINI_API_KEY environment variable.');
     }
     
-    // Get and parse the AI response
-    const data = await response.json();
-    const analysisText = data.choices?.[0]?.message?.content;
+    // Create Gemini AI client with correct API version (v1, not v1beta)
+    const genAI = new GoogleGenerativeAI(apiKey);
     
-    if (!analysisText) {
-      throw new Error('Empty response from AI service');
+    // Use the correct model version available in the current API
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-pro", // Updated model name to gemini-1.5-pro which is the current version
+      generationConfig: {
+        temperature: 0.2,
+      }
+    });
+    
+    // Limit text size to avoid token limits
+    const resumeExcerpt = resumeText.slice(0, 6000);
+    const jobDescriptionExcerpt = jobDescription.slice(0, 3000);
+    
+    // Create parts for the Gemini model
+    const parts = [
+      {text: `
+      You are an expert ATS (Applicant Tracking System) analyzer and resume consultant.
+      Analyze the provided resume against the job description below.
+      Provide a comprehensive evaluation with detailed statistics and actionable feedback.
+      
+      RESUME:
+      ${resumeExcerpt} 
+      
+      JOB DESCRIPTION:
+      ${jobDescriptionExcerpt}
+      
+      Generate a detailed analysis in JSON format with the following structure:
+      {
+        "matchedKeywords": ["keyword1", "keyword2", ...],
+        "missingKeywords": ["keyword1", "keyword2", ...],
+        "score": 75, // overall match percentage (0-100)
+        "suggestions": ["suggestion1", "suggestion2", ...],
+        "sectionScores": {
+          "skills": 80,
+          "experience": 70,
+          "education": 90,
+          "overall": 75
+        },
+        "keywordImportance": {
+          "keyword1": 8, // importance on scale of 1-10
+          "keyword2": 6,
+          ...
+        },
+        "actionVerbs": {
+          "strong": ["achieved", "implemented", ...],
+          "weak": ["responsible for", "helped with", ...]
+        },
+        "readabilityScore": 85, // 0-100
+        "contentGaps": ["missing section1", "missing section2", ...],
+        "industryKeywords": ["industry term1", "industry term2", ...]
+      }
+      
+      Return valid JSON only, with no additional text or explanations outside the JSON structure.
+      `}
+    ];
+    
+    // Generate content with Gemini using the structured content format
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts }],
+      generationConfig: {
+        temperature: 0.2,
+      },
+    });
+    
+    const response = await result.response;
+    const text = response.text();
+    
+    if (!text || text.trim() === '') {
+      throw new Error('Empty response from Gemini AI service');
+    }
+    
+    // Extract JSON from the response
+    let jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('Could not extract JSON from Gemini response');
     }
     
     // Parse the JSON response
-    return JSON.parse(analysisText);
+    const analysis = JSON.parse(jsonMatch[0]);
     
-  } catch (error) {
-    throw error;
+    // Ensure the required fields exist
+    if (!analysis.matchedKeywords || !analysis.missingKeywords || !analysis.score || !analysis.suggestions) {
+      throw new Error('Incomplete analysis data from Gemini AI');
+    }
+    
+    return analysis;
+    
+  } catch (error: any) {
+    // Handle specific error cases
+    if (error.message?.includes('JSON')) {
+      throw new Error('Failed to parse Gemini AI response: Invalid JSON format');
+    } else if (error.message?.includes('quota')) {
+      throw new Error('Gemini API quota exceeded. Please check your billing details.');
+    } else if (error.message?.includes('429')) {
+      throw new Error('Gemini AI rate limit reached. Please try again later.');
+    } else if (error.message?.includes('API key')) {
+      throw new Error('Invalid Gemini API key. Please check your environment variables.');
+    } else {
+      // Pass through the original error with additional context
+      throw new Error(`Gemini AI error: ${error.message || 'Unknown error'}`);
+    }
   }
 }
 
