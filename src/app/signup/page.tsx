@@ -119,7 +119,61 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Left column - form */}
+      {/* Left column - information */}
+      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-primary to-primary/80 items-center justify-center">
+        <div className="max-w-md px-6 py-12 text-white">
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold mb-4">Join the UniReview Community</h2>
+            <p className="text-lg">
+              Create an account to share your university experience and help others find their perfect fit.
+            </p>
+          </div>
+          
+          <div className="space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="bg-white/10 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl">Share Your Experience</h3>
+                <p className="text-white/80">Write detailed reviews about your university experience</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4">
+              <div className="bg-white/10 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl">Join the Community</h3>
+                <p className="text-white/80">Connect with students and alumni from universities worldwide</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4">
+              <div className="bg-white/10 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl">Rate and Review</h3>
+                <p className="text-white/80">Help others by sharing honest feedback about your university</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Right column - form */}
       <div className="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-background">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
@@ -272,60 +326,6 @@ export default function SignUpPage() {
               <Link href="/login" className="font-medium text-primary hover:text-primary/80 underline underline-offset-4">
                 Sign in
               </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Right column - information */}
-      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-primary to-primary/80 items-center justify-center">
-        <div className="max-w-md px-6 py-12 text-white">
-          <div className="mb-12">
-            <h2 className="text-3xl font-bold mb-4">Join the UniReview Community</h2>
-            <p className="text-lg">
-              Create an account to share your university experience and help others find their perfect fit.
-            </p>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="bg-white/10 p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-xl">Share Your Experience</h3>
-                <p className="text-white/80">Write detailed reviews about your university experience</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-4">
-              <div className="bg-white/10 p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-xl">Join the Community</h3>
-                <p className="text-white/80">Connect with students and alumni from universities worldwide</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-4">
-              <div className="bg-white/10 p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-xl">Rate and Review</h3>
-                <p className="text-white/80">Help others by sharing honest feedback about your university</p>
-              </div>
             </div>
           </div>
         </div>

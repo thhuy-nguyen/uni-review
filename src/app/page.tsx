@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('find-reviews');
   const [currentTheme, setCurrentTheme] = useState<string>('light');
+  const [howItWorksVisible, setHowItWorksVisible] = useState(false);
+  const howItWorksRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Detect the current theme for proper styling
@@ -32,10 +34,30 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (howItWorksRef.current) {
+        const rect = howItWorksRef.current.getBoundingClientRect();
+        setHowItWorksVisible(rect.top < window.innerHeight && rect.bottom > 0);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleTabChange = (tabName: string) => {
     setActiveTab(tabName);
   };
-  
+
+  const howItWorksAnimation = (index: number) => ({
+    transitionDelay: `${index * 200}ms`,
+    opacity: howItWorksVisible ? 1 : 0,
+    transform: howItWorksVisible ? 'translateY(0)' : 'translateY(20px)',
+  });
+
   return (
     <>
       {/* Hero Section */}
@@ -337,67 +359,84 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="w-full py-20 md:py-28 bg-background border-y border-border">
+      <section
+        ref={howItWorksRef}
+        className={`w-full py-20 md:py-28 bg-gradient-to-br from-base-100 to-base-200/30 transition-all duration-1000 ease-in-out ${
+          howItWorksVisible 
+            ? 'opacity-100 transform translate-y-0' 
+            : 'opacity-0 transform translate-y-10'
+        }`}
+      >
         <div className="container px-4 md:px-6 mx-auto max-w-7xl">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-16">
-            <div className="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-2">
-              SIMPLE PROCESS
-            </div>
-            <div className="space-y-2 max-w-3xl mx-auto">
-              <h2 className="text-3xl font-bold tracking-tight md:text-4xl text-foreground">How It Works</h2>
-              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-lg">
-                Simple steps to find the right university for you
-              </p>
-            </div>
+          <div className="text-center mb-16">
+            <span className="badge badge-primary mb-3 p-3">HOW IT WORKS</span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Make Informed Decisions</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Finding the right university has never been easier
+            </p>
           </div>
           
-          <div className="mx-auto mt-12 max-w-6xl relative">
-            {/* Connect line */}
-            <div className="hidden md:block absolute h-0.5 bg-border top-16 left-[20%] right-[20%] z-0"></div>
+          {/* Process Steps with Timeline */}
+          <div className="relative mt-20 max-w-5xl mx-auto">
+            {/* Timeline connector */}
+            <div className="hidden md:block absolute h-1 bg-base-300 top-16 left-[15%] right-[15%] z-0">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-secondary/60 w-0 h-full transition-all duration-1000 ease-out"
+                   style={{ width: howItWorksVisible ? '100%' : '0%' }}></div>
+            </div>
             
-            <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-6">
               {/* Step 1 */}
-              <div className="flex flex-col items-center relative">
-                <div className="w-14 h-14 flex items-center justify-center rounded-full bg-primary/10 text-primary font-bold z-10 mb-5">
+              <div 
+                className="flex flex-col items-center text-center relative"
+                style={howItWorksAnimation(0)}
+              >
+                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-bold text-xl mb-6 z-10 shadow-lg border border-primary/20">
                   1
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-center text-foreground">Search universities</h3>
-                <p className="text-muted-foreground text-center text-sm">
-                  Find schools based on location, program, or specific criteria that matter to you.
-                </p>
+                <div className="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 border border-base-300">
+                  <div className="card-body p-6 items-center text-center">
+                    <h3 className="card-title text-xl font-bold mb-3">Explore Universities</h3>
+                    <p className="text-muted-foreground">
+                      Browse through our extensive database and filter by location, program, or specialized criteria.
+                    </p>
+                  </div>
+                </div>
               </div>
               
               {/* Step 2 */}
-              <div className="flex flex-col items-center relative">
-                <div className="w-14 h-14 flex items-center justify-center rounded-full bg-primary/10 text-primary font-bold z-10 mb-5">
+              <div 
+                className="flex flex-col items-center text-center relative"
+                style={howItWorksAnimation(1)}
+              >
+                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-bold text-xl mb-6 z-10 shadow-lg border border-primary/20">
                   2
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-center text-foreground">Read reviews</h3>
-                <p className="text-muted-foreground text-center text-sm">
-                  Get insights from current students and alumni about academics, campus life, and career prospects.
-                </p>
+                <div className="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 border border-base-300">
+                  <div className="card-body p-6 items-center text-center">
+                    <h3 className="card-title text-xl font-bold mb-3">Read Authentic Reviews</h3>
+                    <p className="text-muted-foreground">
+                      Get insights on academics, campus life, value, and career outcomes from verified students.
+                    </p>
+                  </div>
+                </div>
               </div>
               
               {/* Step 3 */}
-              <div className="flex flex-col items-center relative">
-                <div className="w-14 h-14 flex items-center justify-center rounded-full bg-primary/10 text-primary font-bold z-10 mb-5">
+              <div 
+                className="flex flex-col items-center text-center relative"
+                style={howItWorksAnimation(2)}
+              >
+                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-bold text-xl mb-6 z-10 shadow-lg border border-primary/20">
                   3
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-center text-foreground">Make decisions</h3>
-                <p className="text-muted-foreground text-center text-sm">
-                  Use real data and authentic experiences to choose the right educational path.
-                </p>
-              </div>
-              
-              {/* Step 4 */}
-              <div className="flex flex-col items-center relative">
-                <div className="w-14 h-14 flex items-center justify-center rounded-full bg-primary/10 text-primary font-bold z-10 mb-5">
-                  4
+                <div className="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 border border-base-300">
+                  <div className="card-body p-6 items-center text-center">
+                    <h3 className="card-title text-xl font-bold mb-3">Make Informed Decisions</h3>
+                    <p className="text-muted-foreground">
+                      Use data-driven insights to choose the best school for your educational and career goals.
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-center text-foreground">Share experience</h3>
-                <p className="text-muted-foreground text-center text-sm">
-                  Help future students by contributing your own review once you've attended.
-                </p>
               </div>
             </div>
           </div>

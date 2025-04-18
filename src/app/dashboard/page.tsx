@@ -29,9 +29,49 @@ export default async function DashboardPage() {
     .order('created_at', { ascending: false })
     .limit(3);
   
+  // Check if user has admin role with error handling
+  let isAdmin = false;
+  try {
+    const { data: userRoles, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', session?.user.id);
+    
+    if (error) {
+      console.error('Error fetching user roles:', error.message);
+      // Continue with isAdmin = false
+    } else {
+      isAdmin = userRoles?.some(r => r.role === 'admin') || false;
+    }
+  } catch (error) {
+    console.error('Error checking admin status:', error);
+    // Continue with isAdmin = false
+  }
+  
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      
+      {/* Admin Section - Only shown to users with admin role */}
+      {isAdmin && (
+        <div className="admin-section mb-8 p-6 bg-primary/10 rounded-lg shadow-sm border border-primary/20">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-xl font-semibold text-primary">Admin Controls</h2>
+            <span className="badge badge-primary p-3">Admin</span>
+          </div>
+          <p className="text-gray-600 mb-4">
+            Access administrative functions to manage university suggestions and site content.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/admin/university-suggestions" className="btn btn-primary btn-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Manage University Suggestions
+            </Link>
+          </div>
+        </div>
+      )}
       
       <div className="welcome-section mb-8 p-6 bg-white rounded-lg shadow-sm">
         <h2 className="text-2xl font-semibold mb-2">Welcome back, {userName}!</h2>

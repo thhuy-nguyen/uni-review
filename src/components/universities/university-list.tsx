@@ -4,7 +4,15 @@ import { useState, useMemo, useEffect } from 'react';
 import UniversityCard from './university-card';
 import SearchBar from './search-bar';
 import CountryFilter from './country-filter';
-import { ChevronDownIcon, SliderIcon, GridIcon, ListIcon, FilterIcon, XCircleIcon } from '@/components/ui/icons';
+import { ChevronDownIcon, SliderIcon, GridIcon, ListIcon, FilterIcon, XCircleIcon, PlusIcon } from '@/components/ui/icons';
+import { createClient } from '@/lib/supabase';
+import SuggestionModal from './suggestion-modal';
+
+interface Country {
+  id: string;
+  name: string;
+  code: string;
+}
 
 interface University {
   id: string;
@@ -37,6 +45,62 @@ export default function UniversityList({ universities }: UniversityListProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  
+  // State for university suggestion modal
+  const [showSuggestionModal, setShowSuggestionModal] = useState(false);
+
+  // State for countries data
+  const [countries, setCountries] = useState<Country[]>([]);
+  // State for user session
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  // Fetch countries from Supabase
+  useEffect(() => {
+    const fetchCountries = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('countries')
+        .select('id, name, code')
+        .order('name');
+      
+      if (!error && data) {
+        setCountries(data);
+      } else {
+        console.error('Error loading countries:', error);
+      }
+    };
+    
+    fetchCountries();
+  }, []);
+
+  // Fetch user session to get email
+  useEffect(() => {
+    const fetchUserSession = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (!error && data.session?.user?.email) {
+        setUserEmail(data.session.user.email);
+      }
+    };
+    
+    fetchUserSession();
+  }, []);
+
+  // Listen for custom events to open the suggestion modal from outside the component
+  useEffect(() => {
+    const handleOpenSuggestionModal = () => {
+      setShowSuggestionModal(true);
+    };
+
+    // Add event listener
+    document.addEventListener('open-university-suggestion-modal', handleOpenSuggestionModal);
+
+    // Clean up event listener
+    return () => {
+      document.removeEventListener('open-university-suggestion-modal', handleOpenSuggestionModal);
+    };
+  }, []);
 
   // Simulate loading for better UX
   useEffect(() => {
@@ -414,13 +478,22 @@ export default function UniversityList({ universities }: UniversityListProps) {
               </svg>
             </div>
             <h3 className="text-xl font-medium mb-2">No universities found</h3>
-            <p className="text-muted-foreground mb-6">We couldn't find any universities matching your search criteria.</p>
-            <button 
-              onClick={resetFilters}
-              className="btn btn-primary"
-            >
-              Reset filters
-            </button>
+            <p className="text-muted-foreground mb-4">We couldn't find any universities matching your search criteria.</p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button 
+                onClick={resetFilters}
+                className="btn btn-primary"
+              >
+                Reset filters
+              </button>
+              <button 
+                onClick={() => setShowSuggestionModal(true)}
+                className="btn btn-outline btn-secondary gap-2"
+              >
+                <PlusIcon className="h-4 w-4" />
+                Suggest a university
+              </button>
+            </div>
           </div>
         </div>
       ) : (
@@ -534,6 +607,12 @@ export default function UniversityList({ universities }: UniversityListProps) {
           )}
         </>
       )}
+
+      {/* Use the separate SuggestionModal component */}
+      <SuggestionModal 
+        isOpen={showSuggestionModal}
+        onClose={() => setShowSuggestionModal(false)}
+      />
     </div>
   );
 }

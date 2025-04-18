@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { StarIcon, GlobeIcon } from '@/components/ui/icons';
 import BackToTopButton from '@/components/ui/back-to-top-button';
+import SuggestUniversityButton from '@/components/universities/suggest-button';
 
 export const metadata: Metadata = {
   title: 'Universities | UniReview',
@@ -163,9 +164,7 @@ export default async function UniversitiesPage() {
           <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
             If you don't see your institution listed, you can suggest it to be added to our database.
           </p>
-          <Link href="/contact" className="btn btn-primary">
-            Suggest a University
-          </Link>
+          <SuggestUniversityButton />
         </div>
       </div>
       

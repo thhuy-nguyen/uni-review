@@ -229,7 +229,7 @@ export default function ResumeAnalysisResults({
           <div className="collapse-content"> 
             <div className="flex flex-wrap gap-2 pt-2">
               {atsAnalysis.matchedKeywords.map((keyword, index) => (
-                <span key={index} className="badge badge-success">{keyword}</span>
+                <span key={index} className="badge badge-success px-3">{keyword}</span>
               ))}
               {atsAnalysis.matchedKeywords.length === 0 && (
                 <div className="text-base-content/70 text-sm italic">No matching keywords found</div>
@@ -249,10 +249,10 @@ export default function ResumeAnalysisResults({
           <div className="collapse-content"> 
             <div className="flex flex-wrap gap-2 pt-2">
               {atsAnalysis.missingKeywords.slice(0, 15).map((keyword, index) => (
-                <span key={index} className="badge badge-error">{keyword}</span>
+                <span key={index} className="badge badge-error px-3">{keyword}</span>
               ))}
               {atsAnalysis.missingKeywords.length > 15 && (
-                <span className="badge badge-neutral">
+                <span className="badge badge-neutral px-3">
                   +{atsAnalysis.missingKeywords.length - 15} more
                 </span>
               )}
@@ -307,9 +307,9 @@ export default function ResumeAnalysisResults({
                       </td>
                       <td>
                         {atsAnalysis.matchedKeywords.includes(keyword) ? (
-                          <span className="badge badge-success badge-sm">Found</span>
+                          <span className="badge badge-success badge-sm px-2">Found</span>
                         ) : (
-                          <span className="badge badge-error badge-sm">Missing</span>
+                          <span className="badge badge-error badge-sm px-2">Missing</span>
                         )}
                       </td>
                     </tr>
@@ -339,7 +339,7 @@ export default function ResumeAnalysisResults({
               <div className="flex flex-wrap gap-2">
                 {atsAnalysis.actionVerbs.strong && atsAnalysis.actionVerbs.strong.length > 0 ? (
                   atsAnalysis.actionVerbs.strong.map((verb, idx) => (
-                    <span key={idx} className="badge badge-success">{verb}</span>
+                    <span key={idx} className="badge badge-success px-3">{verb}</span>
                   ))
                 ) : (
                   <span className="text-sm text-base-content/70">No strong action verbs detected</span>
@@ -357,7 +357,7 @@ export default function ResumeAnalysisResults({
               <div className="flex flex-wrap gap-2">
                 {atsAnalysis.actionVerbs.weak && atsAnalysis.actionVerbs.weak.length > 0 ? (
                   atsAnalysis.actionVerbs.weak.map((verb, idx) => (
-                    <span key={idx} className="badge badge-outline badge-error">{verb}</span>
+                    <span key={idx} className="badge badge-outline badge-error px-3">{verb}</span>
                   ))
                 ) : (
                   <span className="text-sm text-success">No weak action verbs detected - great job!</span>
@@ -401,7 +401,7 @@ export default function ResumeAnalysisResults({
           
           <div className="flex flex-wrap gap-2">
             {atsAnalysis.industryKeywords.map((keyword, idx) => (
-              <div key={idx} className="badge badge-info badge-lg">{keyword}</div>
+              <div key={idx} className="badge badge-info badge-lg px-3">{keyword}</div>
             ))}
           </div>
         </div>
